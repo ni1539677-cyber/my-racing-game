@@ -1,71 +1,29 @@
-const score = document.querySelector('#score');
-const startBtn = document.querySelector('#startBtn');
-const startScreen = document.querySelector('#startScreen');
-const gameArea = document.querySelector('#gameArea');
-
-let player = { speed: 7, score: 0 };
-startBtn.addEventListener('click', () => {
-    startScreen.style.display = 'none';
-    gameArea.innerHTML = "";
-    player.start = true;
-    player.score = 0;
-    
-    // নিজের গাড়ি তৈরি
-    let car = document.createElement('div');
-    car.setAttribute('class', 'car');
-    gameArea.appendChild(car);
-    player.x = car.offsetLeft;
-    player.y = car.offsetTop;
-
-    // রাস্তার লাইন তৈরি
-    for(x=0; x<5; x++) {
-        let line = document.createElement('div');
-        line.setAttribute('class', 'line');
-        line.y = (x*150);
-        line.style.top = line.y + "px";
-        gameArea.appendChild(line);
-    }
-
-    // শত্রু গাড়ি তৈরি
-    for(x=0; x<3; x++) {
-        let enemy = document.createElement('div');
-        enemy.setAttribute('class', 'enemy');
-        enemy.y = ((x+1)*350) * -1;
-        enemy.style.top = enemy.y + "px";
-        enemy.style.left = Math.floor(Math.random() * 350) + "px";
-        gameArea.appendChild(enemy);
-    }
-    
-    window.requestAnimationFrame(playGame);
-});
-
-function playGame() {
-    if(player.start) {
-        moveLines();
-        moveEnemy();
-        player.score++;
-        score.innerText = "Score: " + player.score;
-        window.requestAnimationFrame(playGame);
-    }
+body { margin: 0; background: #1a1a1a; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
+#gameArea { 
+    width: 400px; height: 100vh; background: #333; margin: 0 auto;
+    position: relative; overflow: hidden; border-left: 8px solid #555; border-right: 8px solid #555;
+    background-image: repeating-linear-gradient(#333, #333 50px, #444 50px, #444 100px); /* রাস্তার টেক্সচার */
 }
-
-function moveLines() {
-    let lines = document.querySelectorAll('.line');
-    lines.forEach(function(item) {
-        if(item.y >= 700) { item.y -= 750; }
-        item.y += player.speed;
-        item.style.top = item.y + "px";
-    });
+.car, .enemy { 
+    position: absolute; width: 50px; height: 90px; border-radius: 12px 12px 5px 5px;
+    box-shadow: 0 20px 15px rgba(0,0,0,0.6); transition: 0.1s;
 }
-
-function moveEnemy() {
-    let enemies = document.querySelectorAll('.enemy');
-    enemies.forEach(function(item) {
-        if(item.y >= 700) {
-            item.y = -600;
-            item.style.left = Math.floor(Math.random() * 350) + "px";
-        }
-        item.y += player.speed;
-        item.style.top = item.y + "px";
-    });
+/* আপনার লাল স্পোর্টস কার */
+.car { 
+    background: linear-gradient(to bottom, #ff0000 0%, #990000 100%); 
+    border: 2px solid #550000;
+}
+.car::before { /* উইন্ডশিল্ড */
+    content: ''; position: absolute; top: 15px; left: 5px; width: 40px; height: 25px;
+    background: #add8e6; border-radius: 5px; opacity: 0.7;
+}
+/* শত্রু গাড়ি (সবুজ/নীল) */
+.enemy { background: linear-gradient(to bottom, #00ff00 0%, #006600 100%); }
+.line { 
+    position: absolute; width: 10px; height: 100px; background: rgba(255,255,255,0.8); 
+    left: 195px; border-radius: 5px;
+}
+#score { 
+    position: absolute; top: 20px; left: 20px; color: #fff; font-size: 28px; 
+    font-weight: bold; text-shadow: 2px 2px #000; z-index: 100;
 }
